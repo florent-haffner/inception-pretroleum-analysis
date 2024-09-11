@@ -1,8 +1,6 @@
 # Inception Petroleum Analysis
 This repository shows the code used in the publication "Inception for Petroleum Analysis" for cetane number prediction. 
 
-The preprint is currently under peer evaluation at Fuel (Elsevier). 
-
 ## The IPA Deep CNN architecture
 
 ![The IPA architecture](Architecture_IPA___PlotNeuralNet.jpg)
