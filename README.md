@@ -6,7 +6,11 @@ This repository shows the code used in the publication "Inception for Petroleum 
 ![The IPA architecture](Architecture_IPA___PlotNeuralNet.jpg)
 
 ## Getting started
-Information : y is already normalized (mean 0 & std 1), the scaler is not given. Therefore, calculated metrics will be 15 times smaller than on the publication. 
+### Notes about our data
+Information : all y are already normalized (mean 0 & std 1), the scaler is not given. Therefore, calculated metrics will be roughly 10 times smaller than on the publication. 
+- PLS will be fed using X and y from 'data/raw-kennard-full_range.mat', y is already normalized (centered) but X are raw.
+- IPA and DeepSpectra will be fed using y from 'y_train_scaled.csv' and 'y_test_scaled.csv', its X comes raw from 'data/raw-kennard-full_range.mat' or feature selected from 'data/raw-kennard-reduced_range.mat'
+
 
 ### Python
 Follow the next commands:
