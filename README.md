@@ -20,8 +20,6 @@ conda activate inception-petroleum-analysis
 
 conda install -c conda-forge cudatoolkit=11.2 cudnn=8.1.0
 
-pip install "tensorflow<2.11"
-
 pip install -r requirements.txt
 ```
 ### Matlab
