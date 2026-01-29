@@ -1,12 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
-"""
-DeepSpectra Model Training and Inference Pipeline
-Production-ready implementation with proper error handling, logging, and configuration management.
-"""
-
 import os
 import logging
+from copy import deepcopy
 from pathlib import Path
 from typing import Tuple, Optional, Dict, Any
 from dataclasses import dataclass
@@ -40,6 +36,9 @@ class ModelConfig:
     """Configuration for DeepSpectra model training and inference."""
     # Paths
     data_path: str = "data/raw-kennard-reduced_range.mat"
+    # Alternative: Use full range dataset
+    # data_path = "data/raw-kennard-full_range.mat"
+
     y_train_path: str = "data/y_train_scaled.csv"
     y_test_path: str = "data/y_test_scaled.csv"
     model_path: str = "model/"
@@ -125,10 +124,6 @@ class DeepSpectraModelPipeline:
             y_train = np.genfromtxt(self.config.y_train_path, delimiter=',')
             y_test = np.genfromtxt(self.config.y_test_path, delimiter=',')
             
-            # Reshape y data
-            y_train = y_train[..., np.newaxis] if y_train.ndim == 1 else y_train
-            y_test = y_test[..., np.newaxis] if y_test.ndim == 1 else y_test
-            
             # Validate shapes
             if X_train.shape[0] != y_train.shape[0]:
                 raise ValueError(f"X_train and y_train size mismatch: {X_train.shape[0]} vs {y_train.shape[0]}")
@@ -142,12 +137,12 @@ class DeepSpectraModelPipeline:
             logger.error(f"Error loading data: {e}")
             raise
     
-    def preprocess_data(
+    def preprocess_X(
         self, 
         X_train: np.ndarray, 
         X_test: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray]:
-        """Standardize and reshape input data.
+        """Standardize and reshape input data in an immutable fashion.
         
         Args:
             X_train: Training features
@@ -156,18 +151,44 @@ class DeepSpectraModelPipeline:
         Returns:
             Tuple of (X_train_processed, X_test_processed)
         """
-        logger.info("Preprocessing data...")
+        logger.info("Preprocessing X...")
+        X_train_preprocessed = deepcopy(X_train)
+        X_test_preprocessed = deepcopy(X_test)
         
         # Standardize
-        X_train_scaled = self.scalerX.fit_transform(X_train)
-        X_test_scaled = self.scalerX.transform(X_test)
+        X_train_preprocessed = self.scalerX.fit_transform(X_train_preprocessed)
+        X_test_preprocessed = self.scalerX.transform(X_test_preprocessed)
         
         # Reshape for CNN input
-        X_train_reshaped = X_train_scaled[..., np.newaxis]
-        X_test_reshaped = X_test_scaled[..., np.newaxis]
+        X_train_preprocessed = X_train_preprocessed[..., np.newaxis] if X_train_preprocessed.ndim == 2 else X_train_preprocessed
+        X_test_preprocessed = X_test_preprocessed[..., np.newaxis] if X_test_preprocessed.ndim == 2 else X_test_preprocessed
         
-        logger.info(f"Data preprocessed - Shape: {X_train_reshaped.shape}")
-        return X_train_reshaped, X_test_reshaped
+        logger.info(f"Data preprocessed - Shape: {X_train_preprocessed.shape}")
+        return X_train_preprocessed, X_test_preprocessed
+    
+    def preprocess_y(
+        self,
+        y_train: np.ndarray, 
+        y_test: np.ndarray
+    ) -> Tuple[np.ndarray, np.ndarray]:
+        """Standardize and reshape y data in an immutable fashion.
+        The standardization is alrady done but a reshape is necessary. 
+        
+        Args:
+            y_train: Training targets
+            y_test: Test targets
+            
+        Returns:
+            Tuple of (y_train_processed, y_test_processed)
+        """
+        logger.info("Preprocessing y...")
+        y_train_preprocessed = deepcopy(y_train)
+        y_test_preprocessed = deepcopy(y_test)
+
+        y_train_preprocessed = y_train_preprocessed[..., np.newaxis] if y_train_preprocessed.ndim == 1 else y_train_preprocessed
+        y_test_preprocessed = y_test_preprocessed[..., np.newaxis] if y_test_preprocessed.ndim == 1 else y_test_preprocessed
+
+        return y_train_preprocessed, y_test_preprocessed
     
     def build_model(self) -> tf.keras.Model:
         """Build and compile the DeepSpectra model.
@@ -319,7 +340,8 @@ class DeepSpectraModelPipeline:
         
         # Load and preprocess data
         X_train, y_train, X_test, y_test = self.load_data()
-        X_train_proc, X_test_proc = self.preprocess_data(X_train, X_test)
+        X_train_proc, X_test_proc = self.preprocess_X(X_train, X_test)
+        y_train_proc, y_test_proc = self.preprocess_y(y_train, y_test)
         
         # Check if model exists
         model_exists = self.load_model()
@@ -329,7 +351,7 @@ class DeepSpectraModelPipeline:
         if not model_exists or force_retrain:
             # Train new model
             logger.info("Training new model...")
-            history = self.train(X_train_proc, y_train, X_test_proc, y_test)
+            history = self.train(X_train_proc, y_train_proc, X_test_proc, y_test_proc)
             
             # Save model
             self.save_model()
@@ -342,12 +364,11 @@ class DeepSpectraModelPipeline:
         
         # Make predictions
         RMSEP, R2P, y_preds = self.predict(
-            X_train_proc, X_test_proc, y_train, y_test
+            X_train_proc, X_test_proc, y_train_proc, y_test_proc
         )
         
         # Display model summary
         self.model.summary()
-        
         results.update({
             'RMSEP': RMSEP,
             'R2P': R2P,
@@ -362,13 +383,8 @@ def main():
     # Create configuration
     config = ModelConfig()
     
-    # Alternative: Use full range dataset
-    # config.data_path = "data/raw-kennard-full_range.mat"
-    
     # Initialize pipeline
     pipeline = DeepSpectraModelPipeline(config)
-    
-    # Run pipeline
     results = pipeline.run_pipeline(force_retrain=False)
     
     logger.info("Pipeline execution completed successfully")
