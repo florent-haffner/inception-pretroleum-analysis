@@ -44,7 +44,7 @@ Inside the main() function, three different approaches are possible:
 - modifying a configuration via config_from_dict().
 
 This code has been rewritten to be more modular and allow for testing different model configurations, as well as extension to other architectures.
-To do this, a practitioner can develop the following classes: ModelType, BaseModelConfig, BaseModelPipeline, and finally update the _registry and _config_registry in the class ModelFactory. 
+To do this, a practitioner can develop the following classes (found on eponym file under directory "src.model_utils"): ModelType, BaseModelConfig, BaseModelPipeline, and finally update class ModelFactory (especially methods: _registry and _config_registry. 
 
 
 ### Notes about our data
