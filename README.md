@@ -1,5 +1,5 @@
 # Inception Petroleum Analysis
-This repository shows the code used in the publication "Inception for Petroleum Analysis" for cetane number prediction. 
+This repository shows the code used in "Inception for Petroleum Analysis" for cetane number prediction. Study published in Fuel (Elsevier), 2025. 
 
 ## The IPA Deep CNN architecture
 
@@ -14,13 +14,7 @@ For more details, verify on the paper under the section -> Methodology / Deep le
 ### Python
 Follow the next commands:
 ```bash
-conda create -n inception-petroleum-analysis python=3.10
-
-conda activate inception-petroleum-analysis 
-
-conda install -c conda-forge cudatoolkit=11.2 cudnn=8.1.0
-
-pip install -r requirements.txt
+conda env create -f environment.yml
 ```
 ### Matlab
 Install [MATLAB R2022b](https://www.mathworks.com/products/new_products/release2022b.html) and [Eigenvector PLS_Toolbox version 9.2](https://wiki.eigenvector.com/index.php?title=Release_Notes_Version_9_2).

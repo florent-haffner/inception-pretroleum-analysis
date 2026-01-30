@@ -1,0 +1,12 @@
+name: inception-petroleum-analysis
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - cudatoolkit=11.2
+  - cudnn=8.1.0
+  - pip
+  - pip:
+    - -r requirements.txt
