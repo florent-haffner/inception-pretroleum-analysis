@@ -235,6 +235,7 @@ def config_from_dict():
     """Create config from dictionary (possible to expand to JSON/YAML configs)."""
     
     config_dict = {
+        # 'data_path': 'data/raw-kennard-full_range.mat', # Another choice for model training/evaluation.
         'data_path': 'data/raw-kennard-reduced_range.mat',
         'learning_rate': 0.001,
         'batch_size': 16,
