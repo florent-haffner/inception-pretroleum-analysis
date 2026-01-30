@@ -1,5 +1,6 @@
 model/
 
 .vscode/
+.idea/
 
 */__pycache__/
