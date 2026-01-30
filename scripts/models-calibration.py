@@ -14,13 +14,12 @@ import numpy as np
 from scipy.io import loadmat
 from sklearn.preprocessing import StandardScaler
 import tensorflow as tf
-from tensorflow.keras import optimizers
 from tqdm.keras import TqdmCallback
 
-from python.DeepSpectra_architecture import DeepSpectra
-from python.IPA_architecture import IPA
-from python.plot_utils import plot_history, plot_val, plot_err
-from python.regression_utils import cnn_prediction
+from src.architectures.DeepSpectra_architecture import DeepSpectra
+from src.architectures.IPA_architecture import IPA
+from src.utils.plot_utils import plot_history
+from src.utils.regression_utils import cnn_prediction
 
 warnings.filterwarnings("ignore")
 
@@ -225,32 +224,6 @@ class BaseModelPipeline(ABC):
         Build and compile the model. Must be implemented by subclass
         """
         pass
-
-    # def build_model(self) -> tf.keras.Model:
-    #     """Build and compile the IPA model.
-        
-    #     Returns:
-    #         Compiled Keras model
-    #     """
-    #     logger.info("Building model...")
-        
-    #     model = IPA(
-    #         seed_value=self.config.seed_value,
-    #         regularization_factor=self.config.regularization_coef
-    #     )
-        
-    #     # Learning rate schedule
-    #     lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
-    #         initial_learning_rate=self.config.learning_rate,
-    #         decay_steps=self.config.decay_steps,
-    #         decay_rate=self.config.decay_rate
-    #     )
-        
-    #     optimizer = optimizers.Adam(learning_rate=lr_schedule)
-    #     model.compile(optimizer=optimizer, loss='mae', metrics=['mse'])
-        
-    #     logger.info("Model built and compiled")
-    #     return model
     
     def train(
         self, 
