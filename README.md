@@ -13,7 +13,7 @@ For more details, verify on the paper under the section -> Methodology / Deep le
 
 ### Python
 Follow the next commands:
-```
+```bash
 conda create -n inception-petroleum-analysis python=3.10
 
 conda activate inception-petroleum-analysis 
@@ -32,17 +32,26 @@ Open the script within the eponymous software.
 
 ### Python
 
-Activate the environment, then
-
-#### IPA calibration
-```
-python -m scripts.IPA-calibration
+Activate the environment: 
+```bash
+conda activate inception-petroleum-analysis 
 ```
 
-#### DeepSpectra calibration
+Launch models calibration with:
+```bash
+python -m scripts.models-calibration
 ```
-python -m scripts.DeepSpectra-calibration
-```
+
+This script can be adapted to different needs.
+
+Inside the main() function, three different approaches are possible:
+- comparing the two models using the compare_models() function,
+- using a very simple approach via the basic_usage() function,
+- modifying a configuration via config_from_dict().
+
+This code has been rewritten to be more modular and allow for testing different model configurations, as well as extension to other architectures.
+To do this, a practitioner can develop the following classes: ModelType, BaseModelConfig, BaseModelPipeline, and finally update the _registry and _config_registry in the class ModelFactory. 
+
 
 ### Notes about our data
 
