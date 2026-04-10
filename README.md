@@ -11,11 +11,6 @@ For more details, verify on the paper under the section -> Methodology / Deep le
 
 ## Getting started
 
-### Python
-Follow the next commands:
-```bash
-conda env create -f environment.yml
-```
 ### Matlab
 Install [MATLAB R2022b](https://www.mathworks.com/products/new_products/release2022b.html) and [Eigenvector PLS_Toolbox version 9.2](https://wiki.eigenvector.com/index.php?title=Release_Notes_Version_9_2).
 
@@ -24,16 +19,29 @@ Install [MATLAB R2022b](https://www.mathworks.com/products/new_products/release2
 
 Open the script within the eponymous software.
 
-### Python
-
-Activate the environment: 
+### Python (Docker)
+Build the docker image (using CPU): 
 ```bash
-conda activate inception-petroleum-analysis 
+docker build -t inception-petroleum-analysis .
 ```
 
-Launch models calibration with:
+Run and access to the output the of docker image: 
 ```bash
-python -m scripts.models-calibration
+docker run -it --rm inception-petroleum-analysis
+```
+
+
+### Python (Conda)
+This environment expect miniconda/anaconda already installed. 
+
+Follow the next commands:
+```bash
+conda env create -f environment.yml
+```
+
+Activate the environment and launch models calibration with:
+```bash
+conda activate inception-petroleum-analysis && python -m scripts.models-calibration
 ```
 
 This script can be adapted to different needs.

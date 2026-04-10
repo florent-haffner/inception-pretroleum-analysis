@@ -277,8 +277,6 @@ class BaseModelPipeline(ABC):
         Returns:
             Dictionary containing results and metrics
         """
-        logger.info(f"TF v{tf.__version__} & Keras v{tf.keras.__version__}")
-
         # Load and preprocess data
         X_train, y_train, X_test, y_test = self.load_data()
         X_train_proc, X_test_proc = self.preprocess_X(X_train, X_test)
