@@ -5,6 +5,7 @@ channels:
   - defaults
 dependencies:
   - python=3.10
+  - tensorflow=2.14
   - cudatoolkit=11.2
   - cudnn=8.1.0
   - pip
