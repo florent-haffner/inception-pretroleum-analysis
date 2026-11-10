@@ -14,7 +14,7 @@ N_TRAIN, N_TEST = 24, 10
 
 
 def pytest_configure(config):
-    config.addinivalue_line("markers", "slow: training on the real dataset (run with `make test-all`)")
+    config.addinivalue_line("markers", "slow: training on the real dataset (run with `make test-slow`)")
     # Harmless noise: plt.show() without a display, Keras/numpy 2 internals, optimizer state not reloaded
     for message in (
         "FigureCanvasAgg is non-interactive",
@@ -25,10 +25,21 @@ def pytest_configure(config):
 
 
 @pytest.fixture(autouse=True)
-def _close_figures():
+def _cleanup():
+    """Free figures and TensorFlow state after each test.
+
+    The suite builds dozens of models in one process; without this, TensorFlow
+    keeps every graph alive, which can end in a native crash on CI runners.
+    """
     yield
+    import gc
+
+    import keras
     import matplotlib.pyplot as plt
+
     plt.close("all")
+    keras.backend.clear_session()
+    gc.collect()
 
 
 @pytest.fixture(scope="session")

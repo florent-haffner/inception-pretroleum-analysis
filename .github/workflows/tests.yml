@@ -31,6 +31,10 @@ jobs:
       - name: Install dependencies
         run: make venv-dev
 
-      - name: Run all tests (including short trainings on the real dataset)
-        run: make test-all
+      - name: Run fast tests
+        run: make test
+
+      # Separate process, so these trainings start with a fresh TensorFlow
+      - name: Run short trainings on the real dataset
+        run: make test-slow
 

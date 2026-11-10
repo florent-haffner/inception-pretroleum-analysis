@@ -7,7 +7,7 @@ IMAGE       := $(PROJECT)
 MODEL_DIR   := $(CURDIR)/model
 
 .DEFAULT_GOAL := help
-.PHONY: help venv venv-dev test test-all conda-env conda-update run run-conda docker-build docker-run clean clean-models
+.PHONY: help venv venv-dev test test-slow test-all conda-env conda-update run run-conda docker-build docker-run clean clean-models
 
 help: ## Show available commands
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
@@ -40,8 +40,11 @@ $(VENV)/.installed-dev: $(ENV_DIR)/requirements-dev.txt $(VENV)/.installed
 test: venv-dev ## Run the fast tests (synthetic data, ~1 min)
 	$(PY) -m pytest tests -m "not slow"
 
-test-all: venv-dev ## Run all tests, including short trainings on the real dataset
-	$(PY) -m pytest tests
+test-slow: venv-dev ## Run the short trainings on the real dataset
+	$(PY) -m pytest tests -m slow
+
+# Two pytest processes: the real-data trainings start with a fresh TensorFlow
+test-all: test test-slow ## Run all tests (fast, then slow in a separate process)
 
 ## --- Conda -----------------------------------------------------------------
 
