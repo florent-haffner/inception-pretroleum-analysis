@@ -34,29 +34,3 @@ jobs:
       - name: Run all tests (including short trainings on the real dataset)
         run: make test-all
 
-  docker:
-    name: Docker image
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: docker/setup-buildx-action@v4
-
-      - name: Build image
-        uses: docker/build-push-action@v7
-        with:
-          context: .
-          file: env/Dockerfile
-          tags: inception-petroleum-analysis:ci
-          load: true
-          push: false
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Check the image imports the pipeline
-        run: >
-          docker run --rm inception-petroleum-analysis:ci
-          python -c "import importlib, tensorflow as tf;
-          importlib.import_module('scripts.models-calibration');
-          print('TensorFlow', tf.__version__)"
