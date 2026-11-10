@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@v7
 
       # The Makefile uses uv to create .venv with Python 3.13
-      - uses: astral-sh/setup-uv@v10
+      - uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
           cache-dependency-glob: env/requirements*.txt
