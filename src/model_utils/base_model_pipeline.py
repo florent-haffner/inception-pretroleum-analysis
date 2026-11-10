@@ -317,10 +317,14 @@ class BaseModelPipeline(ABC):
 
         # Display model summary
         self.model.summary()
+        n_params = self.model.count_params()
+        # Keras 3 summary "Total params" also counts optimizer variables (Adam: 2 per weight)
+        logger.info(f"Model parameters: {n_params:,} (summary total also includes optimizer variables)")
         results.update({
             'RMSEP': RMSEP,
             'R2P': R2P,
-            'predictions': y_preds
+            'predictions': y_preds,
+            'n_params': n_params
         })
 
         return results

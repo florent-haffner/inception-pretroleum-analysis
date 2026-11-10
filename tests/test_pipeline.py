@@ -103,6 +103,16 @@ def test_save_and_reload_gives_same_predictions(make_pipeline, model_type):
     np.testing.assert_allclose(first["predictions"], second["predictions"], atol=1e-5)
 
 
+def test_reported_param_count_excludes_optimizer(make_pipeline, caplog):
+    import logging
+    pipeline = make_pipeline(ModelType.IPA)
+    with caplog.at_level(logging.INFO):
+        results = pipeline.run_pipeline()
+    weights = sum(int(np.prod(w.shape)) for w in pipeline.model.weights)
+    assert results["n_params"] == weights
+    assert f"Model parameters: {weights:,}" in caplog.text
+
+
 def test_force_retrain(make_pipeline):
     make_pipeline(ModelType.IPA).run_pipeline()
     results = make_pipeline(ModelType.IPA).run_pipeline(force_retrain=True)
