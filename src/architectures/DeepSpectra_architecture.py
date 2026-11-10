@@ -31,38 +31,38 @@ class Module_35x35(tf.keras.layers.Layer):
                         kernel_size=1,
                         strides=STRIDE_2,
                         kernel_regularizer=L2(regularization_factor),
-                        kernel_initializer=initializers.VarianceScaling(seed_value))
+                        kernel_initializer=initializers.VarianceScaling(seed=seed_value))
         ])
         self.branch2 = tf.keras.Sequential([
             BasicConv1D(filters=4,
                         kernel_size=1,
                         strides=STRIDE_2,
                         kernel_regularizer=L2(regularization_factor),
-                        kernel_initializer=initializers.VarianceScaling(seed_value)),
+                        kernel_initializer=initializers.VarianceScaling(seed=seed_value)),
             BasicConv1D(filters=4,
                         kernel_size=KERNEL_SIZE_3,
                         strides=STRIDE_2,
                         kernel_regularizer=L2(regularization_factor),
-                        kernel_initializer=initializers.VarianceScaling(seed_value)),
+                        kernel_initializer=initializers.VarianceScaling(seed=seed_value)),
         ])
         self.branch3 = tf.keras.Sequential([
             BasicConv1D(filters=4,
                         kernel_size=1,
                         strides=STRIDE_2,
                         kernel_regularizer=L2(regularization_factor),
-                        kernel_initializer=initializers.VarianceScaling(seed_value)),
+                        kernel_initializer=initializers.VarianceScaling(seed=seed_value)),
             BasicConv1D(filters=4,
                         kernel_size=KERNEL_SIZE_3,
                         strides=STRIDE_2,
                         kernel_regularizer=L2(regularization_factor),
-                        kernel_initializer=initializers.VarianceScaling(seed_value)),
+                        kernel_initializer=initializers.VarianceScaling(seed=seed_value)),
         ])
         self.branch4 = tf.keras.Sequential([
             BasicConv1D(filters=4,
                         kernel_size=1,
                         strides=STRIDE_2,
                         kernel_regularizer=L2(regularization_factor),
-                        kernel_initializer=initializers.VarianceScaling(seed_value)),
+                        kernel_initializer=initializers.VarianceScaling(seed=seed_value)),
         ])
 
     def call(self, x):
@@ -85,7 +85,7 @@ class DeepSpectra(tf.keras.Model):
                                  kernel_size=KERNEL_SIZE_1,
                                  strides=STRIDE_1,
                                  kernel_regularizer=L2(regularization_factor),
-                                 kernel_initializer=initializers.VarianceScaling(seed_value))
+                                 kernel_initializer=initializers.VarianceScaling(seed=seed_value))
         self.module_35x35 = Module_35x35(regularization_factor=regularization_factor,
                                          seed_value=seed_value)
         self.flatten = Flatten()

@@ -7,7 +7,7 @@ IMAGE       := $(PROJECT)
 MODEL_DIR   := $(CURDIR)/model
 
 .DEFAULT_GOAL := help
-.PHONY: help venv conda-env conda-update run run-conda docker-build docker-run clean clean-models
+.PHONY: help venv venv-dev test test-all conda-env conda-update run run-conda docker-build docker-run clean clean-models
 
 help: ## Show available commands
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
@@ -26,6 +26,22 @@ $(VENV)/.installed: $(ENV_DIR)/requirements.txt
 
 run: venv ## Train/evaluate the models with the local .venv
 	$(PY) -m scripts.models-calibration
+
+venv-dev: $(VENV)/.installed-dev
+
+$(VENV)/.installed-dev: $(ENV_DIR)/requirements-dev.txt $(VENV)/.installed
+	@if command -v uv >/dev/null 2>&1; then \
+		uv pip install --python $(PY) -r $<; \
+	else \
+		$(PY) -m pip install -r $<; \
+	fi
+	@touch $@
+
+test: venv-dev ## Run the fast tests (synthetic data, ~1 min)
+	$(PY) -m pytest tests -m "not slow"
+
+test-all: venv-dev ## Run all tests, including short trainings on the real dataset
+	$(PY) -m pytest tests
 
 ## --- Conda -----------------------------------------------------------------
 

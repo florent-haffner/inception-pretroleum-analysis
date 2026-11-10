@@ -13,9 +13,11 @@ def plot_val(test_labels, test_predictions, rmse_limit=2.8, axes=[7, 16]):
     mask_color = np.logical_or((test_predictions >= (test_labels + rmse_limit)),
                                (test_predictions <= (test_labels - rmse_limit)))
     per_in = 1 - np.sum(mask_color) / mask_color.size
-    color = np.where(mask_color, 'out', f'in ({per_in * 100:.2f}%)')
+    category = np.where(mask_color, 'out', 'in')
+    # A dict maps each category to its colour, whichever categories are present
     sns.scatterplot(x=test_labels.flatten(), y=test_predictions.flatten(),
-                    hue=color.flatten(), palette=['#212c3d', '#c05e31'])
+                    hue=category.flatten(), palette={'in': '#212c3d', 'out': '#c05e31'},
+                    legend=False)
     mini = min(test_labels.flatten().min(), test_predictions.flatten().min())
     maxi = max(test_labels.flatten().max(), test_predictions.flatten().max())
 

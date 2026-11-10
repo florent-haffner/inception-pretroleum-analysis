@@ -57,7 +57,8 @@ class IPAModelPipeline(BaseModelPipeline):
 
         model = IPA(
             seed_value=self.config.seed_value,
-            regularization_factor=self.config.regularization_coef
+            regularization_factor=self.config.regularization_coef,
+            dropout_rate=self.config.dropout_rate
         )
 
         lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
@@ -86,7 +87,8 @@ class DeepSpectraModelPipeline(BaseModelPipeline):
 
         model = DeepSpectra(
             seed_value=self.config.seed_value,
-            regularization_factor=self.config.regularization_coef
+            regularization_factor=self.config.regularization_coef,
+            dropout_rate=self.config.dropout_rate
         )
 
         lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
