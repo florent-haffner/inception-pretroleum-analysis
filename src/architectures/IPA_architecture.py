@@ -9,7 +9,8 @@ class BasicConv1D(tf.keras.layers.Layer):
     def __init__(self, filters, kernel_size, strides=1, **kwargs):
         super(BasicConv1D, self).__init__()
         self.conv = Conv1D(filters, kernel_size=kernel_size, strides=strides, **kwargs)
-        self.activation = LeakyReLU()
+        # Keras 3 changed the default slope from 0.3 to 0.2; keep the published value.
+        self.activation = LeakyReLU(negative_slope=0.3)
 
     def call(self, x):
         x = self.conv(x)

@@ -1,0 +1,15 @@
+# Latest stable releases as of 2026-11-10.
+# TensorFlow 2.21 supports Python 3.10 to 3.13 -> Python 3.13 is used.
+# GPU (Linux only): replace "tensorflow" with "tensorflow[and-cuda]" (CUDA 12 / cuDNN 9 wheels).
+tensorflow==2.21.0
+keras==3.15.1
+
+numpy==2.5.4
+scipy==1.18.1
+scikit-learn==1.9.1
+pandas==3.1.1
+
+matplotlib==3.11.2
+seaborn==0.13.2
+
+tqdm==4.70.1

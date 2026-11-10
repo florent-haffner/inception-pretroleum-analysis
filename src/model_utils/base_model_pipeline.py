@@ -213,26 +213,36 @@ class BaseModelPipeline(ABC):
         if self.model is None:
             raise ValueError("No model to save. Train or load a model first.")
 
-        model_path = Path(self.config.model_path) / self.config.model_name
+        model_path = self._weights_path()
         model_path.parent.mkdir(parents=True, exist_ok=True)
 
-        self.model.save(str(model_path), overwrite=True, save_format='tf')
-        logger.info(f"Model saved to {model_path}")
+        self.model.save_weights(str(model_path), overwrite=True)
+        logger.info(f"Model weights saved to {model_path}")
 
-    def load_model(self) -> bool:
-        """Load a saved model from disk.
+    def _weights_path(self) -> Path:
+        """Path of the saved weights (Keras 3 requires the '.weights.h5' suffix)."""
+        return Path(self.config.model_path) / f"{self.config.model_name}.weights.h5"
+
+    def load_model(self, input_shape: Tuple[int, ...]) -> bool:
+        """Rebuild the model and load its saved weights from disk.
+
+        Args:
+            input_shape: Shape of one input sample, e.g. (n_wavelengths, 1)
 
         Returns:
             True if model was loaded, False if model doesn't exist
         """
-        model_path = Path(self.config.model_path) / self.config.model_name
+        model_path = self._weights_path()
 
         if not model_path.exists():
             logger.info(f"Model not found at {model_path}")
             return False
 
         try:
-            self.model = tf.keras.models.load_model(str(model_path))
+            self.model = self.build_model()
+            # Subclassed models create their weights on the first call
+            self.model(np.zeros((1, *input_shape), dtype=np.float32))
+            self.model.load_weights(str(model_path))
             logger.info(f"Model loaded from {model_path}")
             return True
         except Exception as e:
@@ -283,7 +293,7 @@ class BaseModelPipeline(ABC):
         y_train_proc, y_test_proc = self.preprocess_y(y_train, y_test)
 
         # Check if model exists
-        model_exists = self.load_model()
+        model_exists = self.load_model(X_train_proc.shape[1:])
         results = {}
 
         if not model_exists or force_retrain:

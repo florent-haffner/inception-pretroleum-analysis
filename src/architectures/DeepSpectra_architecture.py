@@ -14,7 +14,7 @@ class BasicConv1D(tf.keras.layers.Layer):
     def __init__(self, filters, kernel_size, strides=1, activation_slope=0.3, **kwargs):
         super(BasicConv1D, self).__init__()
         self.conv = Conv1D(filters, kernel_size=kernel_size, strides=strides, **kwargs)
-        self.activation = LeakyReLU(alpha=activation_slope)
+        self.activation = LeakyReLU(negative_slope=activation_slope)
 
     def call(self, x):
         x = self.conv(x)

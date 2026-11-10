@@ -3,7 +3,7 @@ This repository shows the code used in "Inception for Petroleum Analysis" for ce
 
 ## The IPA Deep CNN architecture
 
-![The IPA architecture](Architecture_IPA___PlotNeuralNet.jpg)
+![The IPA architecture](docs/images/Architecture_IPA___PlotNeuralNet.jpg)
 
 Convolutions with kernel size 3 are shown in blue, convolutions with kernel size 1 are shown in red. 
 The numbers of neurons are shown under each computational blocks. 
@@ -19,32 +19,43 @@ Install [MATLAB R2022b](https://www.mathworks.com/products/new_products/release2
 
 Open the script within the eponymous software.
 
-### Python (Docker)
-Build the docker image (using CPU): 
+### Python
+The Python environment uses Python 3.13 and TensorFlow 2.21 (Keras 3), the latest stable releases as of November 2026. 
+All environment files live in `env/` (`requirements.txt`, `environment.yml`, `Dockerfile`) and every command goes through the `Makefile`: 
+
 ```bash
-docker build -t inception-petroleum-analysis .
+make help
 ```
 
-Run and access to the output the of docker image: 
+#### Docker (CPU)
+Build the image, then run it. Trained weights are written to `./model`:
 ```bash
-docker run -it --rm inception-petroleum-analysis
+make docker-build
+```
+```bash
+make docker-run
 ```
 
-
-### Python (Conda)
-This environment expect miniconda/anaconda already installed. 
-
-Follow the next commands:
+#### Local virtualenv
+Creates `.venv` (with [uv](https://docs.astral.sh/uv/) if installed, otherwise `python3.13 -m venv`) and launches models calibration:
 ```bash
-conda env create -f environment.yml
+make run
 ```
 
-Activate the environment and launch models calibration with:
+#### Conda
+This environment expects miniconda/anaconda already installed.
 ```bash
-conda activate inception-petroleum-analysis && python -m scripts.models-calibration
+make conda-env
+```
+```bash
+make run-conda
 ```
 
-This script can be adapted to different needs.
+#### GPU
+On Linux, replace `tensorflow` with `tensorflow[and-cuda]` in `env/requirements.txt` (CUDA 12 and cuDNN 9 are installed by pip).
+
+#### Customising the pipeline
+The script `scripts/models-calibration.py` can be adapted to different needs.
 
 Inside the main() function, three different approaches are possible:
 - comparing the two models using the compare_models() function,
@@ -57,7 +68,7 @@ To do this, a practitioner can develop the following classes (found on eponym fi
 
 ### Notes about our data
 
-![Data mangement](data_mgt.drawio.png)
+![Data mangement](docs/images/data_mgt.drawio.png)
 
 Information : all y are already normalized to follow entreprise policy, the scaler is not given. Therefore, calculated metrics will be roughly 10 times smaller than on the publication. 
 - PLS will be fed using X and y from 'data/raw-kennard-full_range.mat', y is already normalized (centered) but X are raw.

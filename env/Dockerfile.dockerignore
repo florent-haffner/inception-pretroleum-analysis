@@ -1,0 +1,7 @@
+# Used by BuildKit when building with -f env/Dockerfile
+**
+!env/requirements.txt
+!src/
+!scripts/*.py
+!data/
+**/__pycache__
